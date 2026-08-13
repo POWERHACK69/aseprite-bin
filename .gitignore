@@ -6,3 +6,4 @@ build
 AppDir
 aseprite*
 !.github/workflows/aseprite-linux.yml
+!aseprite.spec
