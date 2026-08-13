@@ -11,6 +11,7 @@ set -euo pipefail
 # AppImage. Both tools are downloaded to the current directory on first run.
 
 VERSION="${1:-${ASEPRITE_VERSION:-}}"
+VERSION=${VERSION#v}
 
 if [ -z "$VERSION" ]; then
   TAG=$(git ls-remote --tags --sort=-version:refname https://github.com/aseprite/aseprite.git \

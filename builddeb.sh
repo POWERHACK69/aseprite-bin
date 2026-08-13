@@ -11,6 +11,7 @@ set -euo pipefail
 #   dpkg, plus the build.sh dependencies (Debian/Ubuntu: see build.sh header)
 
 VERSION="${1:-${ASEPRITE_VERSION:-}}"
+VERSION=${VERSION#v}
 
 if [ -z "$VERSION" ]; then
   TAG=$(git ls-remote --tags --sort=-version:refname https://github.com/aseprite/aseprite.git \

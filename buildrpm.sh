@@ -14,6 +14,7 @@ set -euo pipefail
 #       mesa-libGL-devel fontconfig-devel openssl-devel
 
 VERSION="${1:-${ASEPRITE_VERSION:-}}"
+VERSION=${VERSION#v}
 
 if [ -z "$VERSION" ]; then
   TAG=$(git ls-remote --tags --sort=-version:refname https://github.com/aseprite/aseprite.git \
