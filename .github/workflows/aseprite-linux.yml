@@ -61,13 +61,13 @@ jobs:
         run: |
           VER=${{ needs.build.outputs.version }}
           mv "github/aseprite-$VER" .
-          ./buildrpm.sh "$VER"
+          RPMBUILD_DIR="$GITHUB_WORKSPACE/rpmbuild" ./buildrpm.sh "$VER"
 
       - name: Archive RPM
         uses: actions/upload-artifact@v4
         with:
           name: aseprite-${{ needs.build.outputs.version }}.rpm
-          path: $HOME/rpmbuild/RPMS/
+          path: rpmbuild/RPMS/
           if-no-files-found: error
 
   deb:
