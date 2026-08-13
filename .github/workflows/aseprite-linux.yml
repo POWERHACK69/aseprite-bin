@@ -1,0 +1,125 @@
+
+name: aseprite-linux
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to build, leave empty for latest"
+        required: false
+
+jobs:
+  build:
+    runs-on: ubuntu-24.04
+    outputs:
+      version: ${{ steps.build.outputs.ASEPRITE_VERSION }}
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y g++ cmake ninja-build \
+            libx11-dev libxcursor-dev libxi-dev libxrandr-dev \
+            libgl1-mesa-dev libfontconfig1-dev libssl-dev
+
+      - name: Build
+        id: build
+        run: ./build.sh
+        env:
+          ASEPRITE_VERSION: ${{ github.event.inputs.version }}
+
+      - name: Archive
+        uses: actions/upload-artifact@v4
+        with:
+          name: aseprite-linux-${{ steps.build.outputs.ASEPRITE_VERSION }}
+          path: github
+          if-no-files-found: error
+
+  rpm:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y rpm desktop-file-utils
+
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: aseprite-linux-${{ needs.build.outputs.version }}
+          path: github
+
+      - name: Package RPM
+        run: |
+          VER=${{ needs.build.outputs.version }}
+          mv "github/aseprite-v$VER" .
+          ./buildrpm.sh "$VER"
+
+      - name: Archive RPM
+        uses: actions/upload-artifact@v4
+        with:
+          name: aseprite-${{ needs.build.outputs.version }}.rpm
+          path: $HOME/rpmbuild/RPMS/
+          if-no-files-found: error
+
+  deb:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: aseprite-linux-${{ needs.build.outputs.version }}
+          path: github
+
+      - name: Package DEB
+        run: |
+          VER=${{ needs.build.outputs.version }}
+          mv "github/aseprite-v$VER" .
+          ./builddeb.sh "$VER"
+
+      - name: Archive DEB
+        uses: actions/upload-artifact@v4
+        with:
+          name: aseprite-${{ needs.build.outputs.version }}.deb
+          path: aseprite_*.deb
+          if-no-files-found: error
+
+  appimage:
+    needs: build
+    runs-on: ubuntu-24.04
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Download build
+        uses: actions/download-artifact@v4
+        with:
+          name: aseprite-linux-${{ needs.build.outputs.version }}
+          path: github
+
+      - name: Package AppImage
+        run: |
+          VER=${{ needs.build.outputs.version }}
+          mv "github/aseprite-v$VER" .
+          ./buildappimage.sh "$VER"
+
+      - name: Archive AppImage
+        uses: actions/upload-artifact@v4
+        with:
+          name: aseprite-${{ needs.build.outputs.version }}.AppImage
+          path: aseprite-*.AppImage
+          if-no-files-found: error

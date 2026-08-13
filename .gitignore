@@ -1,4 +1,8 @@
 *.zip
+*.deb
+*.AppImage
 skia*
 build
+AppDir
 aseprite*
+!.github/workflows/aseprite-linux.yml
