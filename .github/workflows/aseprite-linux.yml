@@ -60,7 +60,7 @@ jobs:
       - name: Package RPM
         run: |
           VER=${{ needs.build.outputs.version }}
-          mv "github/aseprite-v$VER" .
+          mv "github/aseprite-$VER" .
           ./buildrpm.sh "$VER"
 
       - name: Archive RPM
@@ -87,7 +87,7 @@ jobs:
       - name: Package DEB
         run: |
           VER=${{ needs.build.outputs.version }}
-          mv "github/aseprite-v$VER" .
+          mv "github/aseprite-$VER" .
           ./builddeb.sh "$VER"
 
       - name: Archive DEB
@@ -114,7 +114,7 @@ jobs:
       - name: Package AppImage
         run: |
           VER=${{ needs.build.outputs.version }}
-          mv "github/aseprite-v$VER" .
+          mv "github/aseprite-$VER" .
           ./buildappimage.sh "$VER"
 
       - name: Archive AppImage
