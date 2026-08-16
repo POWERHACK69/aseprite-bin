@@ -41,6 +41,8 @@ tar -czf "$RPMBUILD_DIR/SOURCES/aseprite-v$VERSION-linux-x64.tar.gz" "aseprite-v
 
 # --nodeps: on Debian/Ubuntu rpmbuild checks BuildRequires against the rpm
 # database, which does not see packages installed via apt/dpkg.
-rpmbuild -bb --nodeps aseprite.spec --define "aseprite_version $VERSION"
+rpmbuild -bb --nodeps aseprite.spec \
+  --define "_topdir $RPMBUILD_DIR" \
+  --define "aseprite_version $VERSION"
 
 echo "RPM written to $RPMBUILD_DIR/RPMS/x86_64/"
